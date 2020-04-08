@@ -41,6 +41,17 @@ function logerr {
     echo -e "$RED $(date +"%r")[ERRO] $1 $NC"
 }
 
+function print_usage {
+    echo ""
+    echo "Usage: $0 COMMAND"
+    echo ""
+    echo "Commands:"
+    echo "  start   setup a kubernetes cluster"
+    echo "  stop    remove the current cluster"
+    echo "  help    print usage"
+    echo ""
+}
+
 function setup_kind {
     log "download 'kind' verion: ${KIND_RELEASE}"
     curl -sLo ./kind https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_RELEASE}/kind-$(uname)-${LINUX_ARCH}
@@ -58,6 +69,7 @@ function setup_kubectl {
 }
 
 function enable_kubectl_autocompletion {
+    log "enable 'kubectl' autocompletion"
     kubectl completion bash > /etc/bash_completion.d/kubectl
 }
 
@@ -73,24 +85,47 @@ function check_dependencies {
 }
 
 function setup_cluster {
-    log "create the kubernetes cluster"
+    log "create kubernetes cluster '${CLUSTER_NAME}'"
     kind create cluster --name ${CLUSTER_NAME}
-    log "specify the cluster name '${CLUSTER_NAME}' as a context in kubectl"
+    log "specify the cluster '${CLUSTER_NAME}' as the current context for kubectl"
     kubectl cluster-info --context kind-${CLUSTER_NAME}
-
 }
 
-log "start bootstrapping.."
-START=$(date +%s)
-log "check dependencies.."
-check_dependencies curl
-check_dependencies docker
-setup_kind
-check_dependencies kind
-setup_kubectl
-check_dependencies kubectl
-enable_kubectl_autocompletion
-setup_cluster
-END=$(date +%s)
-DURATION=$(( $END - $START ))
-log "finished in $DURATION seconds."
+function remove_cluster {
+    log "remove kubernetes cluster '${CLUSTER_NAME}'"
+    kind delete cluster --name ${CLUSTER_NAME}
+}
+
+function bootstrap_cluster {
+    log "start bootstrapping.."
+    START=$(date +%s)
+    log "check dependencies.."
+    check_dependencies curl
+    check_dependencies docker
+    setup_kind
+    check_dependencies kind
+    setup_kubectl
+    check_dependencies kubectl
+    enable_kubectl_autocompletion
+    setup_cluster
+    END=$(date +%s)
+    DURATION=$(( $END - $START ))
+    log "finished in $DURATION seconds."
+}
+
+case "$1" in
+    "start")
+        bootstrap_cluster
+        ;;
+    "stop")
+        remove_cluster
+        ;;
+    "help")
+        print_usage
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
+esac
+
