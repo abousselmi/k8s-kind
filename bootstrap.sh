@@ -56,6 +56,10 @@ function setup_kubectl {
     mv ./kubectl ${BIN_DIR}
 }
 
+function enable_kubectl_autocompletion {
+    kubectl completion bash > /etc/bash_completion.d/kubectl
+}
+
 function check_dependencies {
     which $1 &> /dev/null
     RET_CODE=$?
@@ -81,6 +85,7 @@ setup_kind
 check_dependencies kind
 setup_kubectl
 check_dependencies kubectl
+enable_kubectl_autocompletion
 create_cluster
 END=$(date +%s)
 DURATION=$(( $END - $START ))
