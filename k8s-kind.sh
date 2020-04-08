@@ -28,6 +28,7 @@ KUBECTL_RELEASE="1.18.0"
 LINUX_ARCH="amd64"
 BIN_DIR="/usr/local/bin/"
 CLUSTER_NAME="k8s"
+CLUSTER_CONFIG="kind-multi-node-config.yaml"
 
 RED='\e[0;31m'
 GREEN='\e[0;32m'
@@ -43,29 +44,51 @@ function logerr {
 
 function print_usage {
     echo ""
-    echo "Usage: $0 COMMAND"
+    echo "Usage: $0 OPTION COMMAND"
+    echo ""
+    echo "Options:"
+    echo "  -m      bootstrap a multi node cluster"
+    echo "  -s      bootstrap a single node cluster"
     echo ""
     echo "Commands:"
-    echo "  start   setup a kubernetes cluster"
+    echo "  start   setup kubernetes cluster"
     echo "  stop    remove the current cluster"
     echo "  help    print usage"
+    echo ""
+    echo "Example:"
+    echo "  To bootstrap a multi node ckuster, you can do:"
+    echo "  sudo $0 -m start"
     echo ""
 }
 
 function setup_kind {
-    log "download 'kind' verion: ${KIND_RELEASE}"
-    curl -sLo ./kind https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_RELEASE}/kind-$(uname)-${LINUX_ARCH}
-    chmod +x ./kind
-    log "move 'kind' to ${BIN_DIR}"
-    mv ./kind ${BIN_DIR}
+    which kind &> /dev/null
+    RET_CODE=$?
+    if [[ $RET_CODE -ne 0 ]] ; then
+        log "'kind' is not installed on the system"
+        log "download 'kind' verion: ${KIND_RELEASE}"
+        curl -sLo ./kind https://github.com/kubernetes-sigs/kind/releases/download/v${KIND_RELEASE}/kind-$(uname)-${LINUX_ARCH}
+        chmod +x ./kind
+        log "move 'kind' to ${BIN_DIR}"
+        mv ./kind ${BIN_DIR}
+    else
+        log "'king' is already installed, continue.."
+    fi
 }
 
 function setup_kubectl {
-    log "download 'kubectl' version: ${KUBECTL_RELEASE}"
-    curl -sLO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_RELEASE}/bin/linux/${LINUX_ARCH}/kubectl
-    chmod +x ./kubectl
-    log "move 'kubectl' to ${BIN_DIR}"
-    mv ./kubectl ${BIN_DIR}
+    which kubectl &> /dev/null
+    RET_CODE=$?
+    if [[ $RET_CODE -ne 0 ]] ; then
+        log "'kubectl' is not installed on the system"
+        log "download 'kubectl' version: ${KUBECTL_RELEASE}"
+        curl -sLO https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_RELEASE}/bin/linux/${LINUX_ARCH}/kubectl
+        chmod +x ./kubectl
+        log "move 'kubectl' to ${BIN_DIR}"
+        mv ./kubectl ${BIN_DIR}
+    else
+        log "'kubectl' is already installed, continue.."
+    fi
 }
 
 function enable_kubectl_autocompletion {
@@ -86,7 +109,11 @@ function check_dependencies {
 
 function setup_cluster {
     log "create kubernetes cluster '${CLUSTER_NAME}'"
-    kind create cluster --name ${CLUSTER_NAME}
+    if $1 ; then
+        kind create cluster --name ${CLUSTER_NAME}
+    else
+        kind create cluster --name ${CLUSTER_NAME} --config ${CLUSTER_CONFIG}
+    fi
     log "specify the cluster '${CLUSTER_NAME}' as the current context for kubectl"
     kubectl cluster-info --context kind-${CLUSTER_NAME}
 }
@@ -103,19 +130,36 @@ function bootstrap_cluster {
     check_dependencies curl
     check_dependencies docker
     setup_kind
-    check_dependencies kind
     setup_kubectl
-    check_dependencies kubectl
     enable_kubectl_autocompletion
-    setup_cluster
+    setup_cluster $1
     END=$(date +%s)
     DURATION=$(( $END - $START ))
     log "finished in $DURATION seconds."
 }
 
 case "$1" in
-    "start")
-        bootstrap_cluster
+    "-m")
+        case "$2" in
+            "start")
+                bootstrap_cluster false
+                ;;
+            *)
+                print_usage
+                exit 1
+                ;;
+        esac
+        ;;
+    "-s")
+        case "$2" in
+            "start")
+                bootstrap_cluster true
+                ;;
+            *)
+                print_usage
+                exit 1
+                ;;
+        esac
         ;;
     "stop")
         remove_cluster
