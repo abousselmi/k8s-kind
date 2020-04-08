@@ -75,11 +75,14 @@ function check_dependencies {
 function setup_cluster {
     log "create the kubernetes cluster"
     kind create cluster --name ${CLUSTER_NAME}
+    log "specify the cluster name '${CLUSTER_NAME}' as a context in kubectl"
+    kubectl cluster-info --context kind-${CLUSTER_NAME}
+
 }
 
 log "start bootstrapping.."
 START=$(date +%s)
-log "checking dependencies.."
+log "check dependencies.."
 check_dependencies curl
 check_dependencies docker
 setup_kind
