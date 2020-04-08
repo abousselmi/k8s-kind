@@ -27,6 +27,7 @@ KIND_RELEASE="0.7.0"
 KUBECTL_RELEASE="1.18.0"
 LINUX_ARCH="amd64"
 BIN_DIR="/usr/local/bin/"
+CLUSTER_NAME="k8s"
 
 RED='\e[0;31m'
 GREEN='\e[0;32m'
@@ -73,7 +74,7 @@ function check_dependencies {
 
 function create_cluster {
     log "create the kubernetes cluster"
-    kind create cluster
+    kind create cluster --name ${CLUSTER_NAME}
 }
 
 log "start bootstrapping.."
