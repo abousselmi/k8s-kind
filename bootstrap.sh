@@ -72,7 +72,7 @@ function check_dependencies {
     fi
 }
 
-function create_cluster {
+function setup_cluster {
     log "create the kubernetes cluster"
     kind create cluster --name ${CLUSTER_NAME}
 }
@@ -87,7 +87,7 @@ check_dependencies kind
 setup_kubectl
 check_dependencies kubectl
 enable_kubectl_autocompletion
-create_cluster
+setup_cluster
 END=$(date +%s)
 DURATION=$(( $END - $START ))
 log "finished in $DURATION seconds."
