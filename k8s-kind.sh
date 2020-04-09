@@ -124,6 +124,7 @@ function remove_cluster {
 }
 
 function bootstrap_cluster {
+    clear
     log "start bootstrapping.."
     START=$(date +%s)
     log "check dependencies.."
