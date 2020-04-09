@@ -35,11 +35,11 @@ GREEN='\e[0;32m'
 NC='\e[0m'
 
 function log {
-    echo -e "$GREEN $(date +"%r")[INFO] $1 $NC"
+    echo -e "🔥$GREEN $(date +"%r")[INFO] $1 $NC"
 }
 
 function logerr {
-    echo -e "$RED $(date +"%r")[ERRO] $1 $NC"
+    echo -e "🔥$RED $(date +"%r")[ERRO] $1 $NC"
 }
 
 function print_usage {
