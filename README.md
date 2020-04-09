@@ -1,4 +1,4 @@
-# k8s-kind-bootstrap
+# Kubernetes with kind
 A simple script to bootstrap a kubernetes cluster based on kind and docker.
 
 ## Usage
