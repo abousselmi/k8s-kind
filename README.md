@@ -1,4 +1,4 @@
-# Kubernetes with kind
+# Kubernetes: the simple way
 A simple script to bootstrap a kubernetes cluster based on kind and docker.
 
 ## Usage
