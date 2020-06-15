@@ -44,7 +44,6 @@ function logerr {
 }
 
 function print_usage {
-    echo ""
     echo "Usage: $0 OPTION COMMAND"
     echo ""
     echo "Options:"
