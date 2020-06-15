@@ -29,6 +29,7 @@ LINUX_ARCH="amd64"
 BIN_DIR="/usr/local/bin/"
 CLUSTER_NAME="k8s"
 CLUSTER_CONFIG="kind-multi-node-config.yaml"
+USER_UID="1000"
 
 RED='\e[0;31m'
 GREEN='\e[0;32m'
@@ -116,6 +117,9 @@ function setup_cluster {
     fi
     log "specify the cluster '${CLUSTER_NAME}' as the current context for kubectl"
     kubectl cluster-info --context kind-${CLUSTER_NAME}
+
+    log "Update kubernetes config ownership"
+    chown -R $USER_UID:$USER_UID /home/$(getent passwd "$USER_UID"|cut -d: -f1)/.kube
 }
 
 function remove_cluster {
