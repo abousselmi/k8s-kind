@@ -38,7 +38,7 @@ Example:
 🔥 07:14:21 PM[INFO] check dependencies.. 
 🔥 07:14:21 PM[INFO] 'curl' is installed, continue.. 
 🔥 07:14:21 PM[INFO] 'docker' is installed, continue.. 
-🔥 07:14:21 PM[INFO] 'king' is already installed, continue.. 
+🔥 07:14:21 PM[INFO] 'kind' is already installed, continue.. 
 🔥 07:14:21 PM[INFO] 'kubectl' is already installed, continue.. 
 🔥 07:14:21 PM[INFO] enable 'kubectl' autocompletion 
 🔥 07:14:21 PM[INFO] create kubernetes cluster 'k8s' 

@@ -72,7 +72,7 @@ function setup_kind {
         log "move 'kind' to ${BIN_DIR}"
         mv ./kind ${BIN_DIR}
     else
-        log "'king' is already installed, continue.."
+        log "'kind' is already installed, continue.."
     fi
 }
 
