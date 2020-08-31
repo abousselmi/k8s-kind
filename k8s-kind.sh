@@ -23,8 +23,8 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-KIND_RELEASE="0.7.0"
-KUBECTL_RELEASE="1.18.0"
+KIND_RELEASE="0.8.1"
+KUBECTL_RELEASE="1.19.0"
 LINUX_ARCH="amd64"
 BIN_DIR="/usr/local/bin/"
 CLUSTER_NAME="k8s"
@@ -186,4 +186,3 @@ case "$1" in
         exit 1
         ;;
 esac
-
